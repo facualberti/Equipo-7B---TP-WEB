@@ -11,34 +11,25 @@ namespace PromoWeb.Web
 {
 
 
-    public partial class _Default
+    public partial class ElegirPremio
     {
 
         /// <summary>
-        /// Control txtVoucher.
+        /// Control lblMsg.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtVoucher;
+        protected global::System.Web.UI.WebControls.Label lblMsg;
 
         /// <summary>
-        /// Control btnSiguiente.
+        /// Control repPremios.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSiguiente;
-
-        /// <summary>
-        /// Control lblError.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblError;
+        protected global::System.Web.UI.WebControls.Repeater repPremios;
     }
 }

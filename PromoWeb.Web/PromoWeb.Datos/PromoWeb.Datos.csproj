@@ -43,8 +43,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccesoDatos.cs" />
+    <Compile Include="ArticuloDatos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VoucherDatos.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PromoWeb.Dominio\PromoWeb.Dominio.csproj">
+      <Project>{30bd0a62-fc6e-46e3-bad4-9be0d559b194}</Project>
+      <Name>PromoWeb.Dominio</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,13 +9,12 @@ namespace PromoWeb.Datos
     {
         private readonly SqlConnection _cn;
         private SqlCommand _cmd;
-        private SqlDataReader _dr = null; // inicializado para evitar warning
+        private SqlDataReader _dr = null;
         public SqlDataReader Lector => _dr;
 
         public AccesoDatos()
         {
-            _cn = new SqlConnection(
-                ConfigurationManager.ConnectionStrings["PromoWebDB"].ConnectionString);
+            _cn = new SqlConnection(ConfigurationManager.ConnectionStrings["PromoWebDB"].ConnectionString);
         }
 
         public void SetConsulta(string sql)
@@ -28,16 +27,27 @@ namespace PromoWeb.Datos
             _cmd.Parameters.AddWithValue(nombre, valor ?? DBNull.Value);
         }
 
+        public void EjecutarLectura()
+        {
+            if (_cn.State != ConnectionState.Open) _cn.Open();
+            _dr = _cmd.ExecuteReader();
+        }
+
         public object EjecutarEscalar()
         {
             if (_cn.State != ConnectionState.Open) _cn.Open();
             return _cmd.ExecuteScalar();
         }
 
-        public void Dispose()
+        public void Cerrar()
         {
             if (_dr != null && !_dr.IsClosed) _dr.Close();
             if (_cn.State == ConnectionState.Open) _cn.Close();
+        }
+
+        public void Dispose()
+        {
+            Cerrar();
             _dr?.Dispose(); _cmd?.Dispose(); _cn?.Dispose();
         }
     }
