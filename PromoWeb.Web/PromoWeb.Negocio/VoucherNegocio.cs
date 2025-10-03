@@ -6,10 +6,10 @@ namespace PromoWeb.Negocio
     {
         private readonly VoucherDatos _datos = new VoucherDatos();
 
-        public bool EsValidoDisponible(string codigoVoucher)
-        {
-            if (string.IsNullOrWhiteSpace(codigoVoucher)) return false;
-            return _datos.ExisteDisponible(codigoVoucher.Trim().ToUpper());
-        }
+        public bool EsValidoDisponible(string codigo) =>
+            _datos.ExisteDisponible(codigo);
+
+        public void MarcarParaCliente(string codigo, int idCliente) =>
+            _datos.AsignarACliente(codigo, idCliente);
     }
 }

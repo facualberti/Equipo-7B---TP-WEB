@@ -87,13 +87,13 @@ namespace PromoWeb.Web
         protected global::System.Web.UI.WebControls.CheckBox chkTyC;
 
         /// <summary>
-        /// Control valTyC.
+        /// Control lblTyC.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valTyC;
+        protected global::System.Web.UI.WebControls.Label lblTyC;
 
         /// <summary>
         /// Control btnParticipar.

@@ -7,5 +7,8 @@ namespace PromoWeb.Negocio
     {
         private readonly ClienteDatos _datos = new ClienteDatos();
         public Cliente ObtenerPorDni(string dni) => _datos.ObtenerPorDni(dni);
+        public int Guardar(Cliente c) => _datos.Guardar(c);
+        public void MarcarVoucherParaCliente(string codigo, int idCliente) => _datos.MarcarVoucherParaCliente(codigo, idCliente);
+
     }
 }

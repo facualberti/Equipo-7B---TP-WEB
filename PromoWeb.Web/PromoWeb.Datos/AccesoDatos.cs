@@ -1,25 +1,31 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 
 namespace PromoWeb.Datos
 {
-    public class AccesoDatos : IDisposable
+    public class AccesoDatos
     {
         private readonly SqlConnection _cn;
-        private SqlCommand _cmd;
-        private SqlDataReader _dr = null;
+        private readonly SqlCommand _cmd;
+        private SqlDataReader _dr;
+
         public SqlDataReader Lector => _dr;
 
         public AccesoDatos()
         {
-            _cn = new SqlConnection(ConfigurationManager.ConnectionStrings["PromoWebDB"].ConnectionString);
+            var cs = ConfigurationManager.ConnectionStrings["PromoWebDB"].ConnectionString;
+            _cn = new SqlConnection(cs);
+            _cmd = new SqlCommand();
+            _cmd.Connection = _cn;
+            _cmd.CommandType = CommandType.Text;
         }
 
         public void SetConsulta(string sql)
         {
-            _cmd = new SqlCommand(sql, _cn) { CommandType = CommandType.Text };
+            _cmd.Parameters.Clear();
+            _cmd.CommandText = sql;
         }
 
         public void SetParametro(string nombre, object valor)
@@ -39,16 +45,16 @@ namespace PromoWeb.Datos
             return _cmd.ExecuteScalar();
         }
 
-        public void Cerrar()
+        public void EjecutarAccion()
         {
-            if (_dr != null && !_dr.IsClosed) _dr.Close();
-            if (_cn.State == ConnectionState.Open) _cn.Close();
+            if (_cn.State != ConnectionState.Open) _cn.Open();
+            _cmd.ExecuteNonQuery();
         }
 
-        public void Dispose()
+        public void Cerrar()
         {
-            Cerrar();
-            _dr?.Dispose(); _cmd?.Dispose(); _cn?.Dispose();
+            try { _dr?.Close(); } catch { }
+            try { if (_cn.State != ConnectionState.Closed) _cn.Close(); } catch { }
         }
     }
 }

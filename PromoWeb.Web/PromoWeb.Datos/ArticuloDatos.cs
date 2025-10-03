@@ -9,18 +9,18 @@ namespace PromoWeb.Datos
         public List<Articulo> ListarPremios()
         {
             var lista = new List<Articulo>();
+            var datos = new AccesoDatos();
 
-            using (var datos = new AccesoDatos())
+            try
             {
-                
                 datos.SetConsulta(@"
-                    SELECT A.Id,
-                           A.Nombre,
-                           A.Descripcion,
-                           (SELECT TOP 1 I.ImagenUrl
-                              FROM Imagenes I
-                              WHERE I.IdArticulo = A.Id
-                              ORDER BY I.Id) AS ImagenUrl
+                    SELECT  A.Id,
+                            A.Nombre,
+                            A.Descripcion,
+                            (SELECT TOP 1 I.ImagenUrl
+                               FROM Imagenes I
+                               WHERE I.IdArticulo = A.Id
+                               ORDER BY I.Id) AS ImagenUrl
                     FROM Articulos A
                     ORDER BY A.Id");
 
@@ -33,11 +33,14 @@ namespace PromoWeb.Datos
                         Id = (int)datos.Lector["Id"],
                         Nombre = datos.Lector["Nombre"] as string ?? "",
                         Descripcion = datos.Lector["Descripcion"] as string ?? "",
-                        ImagenUrl = datos.Lector["ImagenUrl"] as string 
+                        ImagenUrl = datos.Lector["ImagenUrl"] as string
                     };
+
                     lista.Add(art);
                 }
-
+            }
+            finally
+            {
                 datos.Cerrar();
             }
 

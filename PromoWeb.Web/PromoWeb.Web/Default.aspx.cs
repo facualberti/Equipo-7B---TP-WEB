@@ -9,19 +9,22 @@ namespace PromoWeb.Web
 
         protected void btnSiguiente_Click(object sender, EventArgs e)
         {
-            Page.Validate(); if (!Page.IsValid) return;
+            Page.Validate();
+            if (!Page.IsValid) return;
 
-            var codigo = txtVoucher.Text.Trim().ToUpper();
+            var codigo = txtVoucher.Text.Trim().ToUpperInvariant();
             try
             {
                 if (_neg.EsValidoDisponible(codigo))
                 {
                     Session["CodigoVoucher"] = codigo;
                     Response.Redirect("~/ElegirPremio.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
                 }
                 else
                 {
                     Response.Redirect("~/VoucherInvalido.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
                 }
             }
             catch (Exception ex)

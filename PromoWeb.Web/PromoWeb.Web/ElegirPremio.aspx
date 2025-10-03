@@ -23,11 +23,7 @@
         <div class="body">
           <h4><%# Eval("Nombre") %></h4>
           <p class="muted"><%# Eval("Descripcion") %></p>
-          <asp:Button runat="server"
-              CommandName="elegir"
-              CommandArgument='<%# Eval("Id") %>'
-              Text="Quiero este"
-              CssClass="btn btn-primary" />
+          <asp:Button runat="server" CommandName="elegir" CommandArgument='<%# Eval("Id") %>' Text="Quiero este" CssClass="btn btn-primary" />
         </div>
       </div>
     </ItemTemplate>

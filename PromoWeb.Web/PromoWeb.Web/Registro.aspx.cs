@@ -6,7 +6,8 @@ namespace PromoWeb.Web
 {
     public partial class Registro : System.Web.UI.Page
     {
-        private readonly ClienteNegocio _neg = new ClienteNegocio();
+        private readonly ClienteNegocio _clientes = new ClienteNegocio();
+        private readonly VoucherNegocio _vouchers = new VoucherNegocio();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,7 +27,7 @@ namespace PromoWeb.Web
             var dni = txtDni.Text.Trim();
             if (string.IsNullOrWhiteSpace(dni)) return;
 
-            var cli = _neg.ObtenerPorDni(dni);
+            var cli = _clientes.ObtenerPorDni(dni);
             if (cli != null)
             {
                 txtNombre.Text = cli.Nombre;
@@ -38,7 +39,6 @@ namespace PromoWeb.Web
             }
             else
             {
-                // limpiar campos si no existe
                 txtNombre.Text = txtApellido.Text = txtEmail.Text = "";
                 txtDireccion.Text = txtCiudad.Text = txtCP.Text = "";
             }
@@ -46,9 +46,53 @@ namespace PromoWeb.Web
 
         protected void btnParticipar_Click(object sender, EventArgs e)
         {
-            // En el próximo paso haremos: validar Page.IsValid, guardar cliente, vincular voucher y mostrar éxito.
-            lblMsg.Text = "Falta implementar el guardado (siguiente paso).";
-            lblMsg.Visible = true;
+            lblMsg.Visible = false;
+            lblTyC.Visible = false;
+
+            Page.Validate();
+            if (!Page.IsValid) return;
+
+            if (!chkTyC.Checked)
+            {
+                lblTyC.Text = "Debés aceptar los términos y condiciones.";
+                lblTyC.Visible = true;
+                return;
+            }
+
+            if (Session["CodigoVoucher"] == null || Session["PremioId"] == null)
+            {
+                Response.Redirect("~/Default.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
+            try
+            {
+                var dni = txtDni.Text.Trim();
+                var cli = _clientes.ObtenerPorDni(dni) ?? new Cliente();
+
+                cli.DNI = dni;
+                cli.Nombre = txtNombre.Text.Trim();
+                cli.Apellido = txtApellido.Text.Trim();
+                cli.Email = txtEmail.Text.Trim();
+                cli.Direccion = txtDireccion.Text.Trim();
+                cli.Ciudad = txtCiudad.Text.Trim();
+                cli.CP = txtCP.Text.Trim();
+
+                var idCli = _clientes.Guardar(cli);
+
+                var codigo = (string)Session["CodigoVoucher"];
+                _vouchers.MarcarParaCliente(codigo, idCli);
+
+                Session["RegistroOk"] = true;
+                Response.Redirect("~/Exito.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+            }
+            catch (Exception ex)
+            {
+                lblMsg.Text = "No pudimos completar el registro: " + ex.Message;
+                lblMsg.Visible = true;
+            }
         }
     }
 }

@@ -11,10 +11,10 @@ namespace PromoWeb.Web
         {
             if (!IsPostBack)
             {
-                
                 if (Session["CodigoVoucher"] == null)
                 {
                     Response.Redirect("~/Default.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
                     return;
                 }
 
@@ -23,7 +23,11 @@ namespace PromoWeb.Web
                 {
                     lblMsg.Text = "No hay premios disponibles por el momento.";
                     lblMsg.Visible = true;
+                    repPremios.DataSource = null;
+                    repPremios.DataBind();
+                    return;
                 }
+
                 repPremios.DataSource = data;
                 repPremios.DataBind();
             }
@@ -33,9 +37,9 @@ namespace PromoWeb.Web
         {
             if (e.CommandName == "elegir")
             {
-                
                 Session["PremioId"] = e.CommandArgument.ToString();
                 Response.Redirect("~/Registro.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
         }
     }

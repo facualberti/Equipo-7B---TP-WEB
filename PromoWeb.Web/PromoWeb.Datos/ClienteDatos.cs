@@ -7,33 +7,87 @@ namespace PromoWeb.Datos
     {
         public Cliente ObtenerPorDni(string dni)
         {
-            using (var datos = new AccesoDatos())
+            var datos = new AccesoDatos();
+            datos.SetConsulta(@"
+                SELECT TOP 1 Id, Documento, Nombre, Apellido, Email, Direccion, Ciudad, CP
+                FROM Clientes
+                WHERE Documento = @dni");
+            datos.SetParametro("@dni", dni);
+            datos.EjecutarLectura();
+
+            Cliente c = null;
+            if (datos.Lector.Read())
             {
-                datos.SetConsulta(@"SELECT Id, DNI, Nombre, Apellido, Email, Direccion, Ciudad, CP
-                                    FROM Clientes WHERE DNI = @dni");
-                datos.SetParametro("@dni", dni);
-                datos.EjecutarLectura();
-
-                if (datos.Lector.Read())
+                c = new Cliente
                 {
-                    var c = new Cliente
-                    {
-                        Id = (int)datos.Lector["Id"],
-                        DNI = datos.Lector["DNI"] as string,
-                        Nombre = datos.Lector["Nombre"] as string,
-                        Apellido = datos.Lector["Apellido"] as string,
-                        Email = datos.Lector["Email"] as string,
-                        Direccion = datos.Lector["Direccion"] as string,
-                        Ciudad = datos.Lector["Ciudad"] as string,
-                        CP = datos.Lector["CP"] as string
-                    };
-                    datos.Cerrar();
-                    return c;
-                }
-
-                datos.Cerrar();
-                return null;
+                    Id = (int)datos.Lector["Id"],
+                    DNI = datos.Lector["Documento"].ToString(),
+                    Nombre = datos.Lector["Nombre"].ToString(),
+                    Apellido = datos.Lector["Apellido"].ToString(),
+                    Email = datos.Lector["Email"].ToString(),
+                    Direccion = datos.Lector["Direccion"].ToString(),
+                    Ciudad = datos.Lector["Ciudad"].ToString(),
+                    CP = datos.Lector["CP"].ToString()
+                };
             }
+
+            datos.Cerrar();
+            return c;
+        }
+
+        public int Guardar(Cliente c)
+        {
+            var datos = new AccesoDatos();
+
+            if (c.Id > 0)
+            {
+                datos.SetConsulta(@"
+                    UPDATE Clientes
+                    SET Documento = @dni, Nombre = @nom, Apellido = @ape, Email = @mail,
+                        Direccion = @dir, Ciudad = @ciu, CP = @cp
+                    WHERE Id = @id");
+                datos.SetParametro("@id", c.Id);
+                datos.SetParametro("@dni", c.DNI ?? "");
+                datos.SetParametro("@nom", c.Nombre ?? "");
+                datos.SetParametro("@ape", c.Apellido ?? "");
+                datos.SetParametro("@mail", c.Email ?? "");
+                datos.SetParametro("@dir", c.Direccion ?? "");
+                datos.SetParametro("@ciu", c.Ciudad ?? "");
+                datos.SetParametro("@cp", c.CP ?? "");
+                datos.EjecutarAccion();
+                datos.Cerrar();
+                return c.Id;
+            }
+            else
+            {
+                datos.SetConsulta(@"
+                    INSERT INTO Clientes (Documento, Nombre, Apellido, Email, Direccion, Ciudad, CP)
+                    VALUES (@dni, @nom, @ape, @mail, @dir, @ciu, @cp);
+                    SELECT SCOPE_IDENTITY();");
+                datos.SetParametro("@dni", c.DNI ?? "");
+                datos.SetParametro("@nom", c.Nombre ?? "");
+                datos.SetParametro("@ape", c.Apellido ?? "");
+                datos.SetParametro("@mail", c.Email ?? "");
+                datos.SetParametro("@dir", c.Direccion ?? "");
+                datos.SetParametro("@ciu", c.Ciudad ?? "");
+                datos.SetParametro("@cp", c.CP ?? "");
+                var id = Convert.ToInt32(datos.EjecutarEscalar());
+                datos.Cerrar();
+                return id;
+            }
+        }
+
+        public void MarcarVoucherParaCliente(string codigoVoucher, int idCliente)
+        {
+            var datos = new AccesoDatos();
+            datos.SetConsulta(@"
+                UPDATE Vouchers
+                SET Usado = 1, IdCliente = @cli, FechaUso = GETDATE()
+                WHERE Codigo = @cod AND Usado = 0");
+            datos.SetParametro("@cli", idCliente);
+            datos.SetParametro("@cod", codigoVoucher);
+            datos.EjecutarAccion();
+            datos.Cerrar();
         }
     }
 }
