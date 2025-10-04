@@ -84,6 +84,9 @@ namespace PromoWeb.Web
                 var codigo = (string)Session["CodigoVoucher"];
                 _vouchers.MarcarParaCliente(codigo, idCli);
 
+                var premioTexto = "Premio seleccionado: " + (Session["PremioId"]?.ToString() ?? "");
+                EmailHelper.EnviarRegistroExitoso(cli.Email, cli.Nombre, codigo, premioTexto);
+
                 Session["RegistroOk"] = true;
                 Response.Redirect("~/Exito.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
