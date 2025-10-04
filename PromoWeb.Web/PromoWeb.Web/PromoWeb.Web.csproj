@@ -152,6 +152,7 @@
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Exito.aspx" />
+    <Content Include="Bases.aspx" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -262,6 +263,13 @@
     </Compile>
     <Compile Include="Exito.aspx.designer.cs">
       <DependentUpon>Exito.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Bases.aspx.cs">
+      <DependentUpon>Bases.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Bases.aspx.designer.cs">
+      <DependentUpon>Bases.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

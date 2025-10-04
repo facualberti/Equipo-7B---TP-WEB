@@ -1,12 +1,17 @@
 ﻿<%@ Page Title="Registro" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Registro.aspx.cs" Inherits="PromoWeb.Web.Registro" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="MainContent" runat="server">
-  <h2>Ingresá tus datos</h2>
+  <style>
+    .form-check{display:flex;align-items:center;gap:.6rem}
+    .form-check .form-check-label{margin:0}
+  </style>
+
+  <h2 class="mb-3">Ingresá tus datos</h2>
 
   <div class="row" style="max-width:900px">
-    <div class="col-md-12">
+    <div class="col-12">
       <div class="mb-3">
-        <label>DNI</label>
+        <label for="<%= txtDni.ClientID %>" class="form-label">DNI</label>
         <asp:TextBox ID="txtDni" runat="server" CssClass="form-control" MaxLength="20"
                      AutoPostBack="true" OnTextChanged="txtDni_TextChanged"
                      AutoCompleteType="Disabled" autocomplete="off" />
@@ -15,13 +20,13 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label>Nombre</label>
+          <label for="<%= txtNombre.ClientID %>" class="form-label">Nombre</label>
           <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"
                        AutoCompleteType="FirstName" autocomplete="given-name" />
           <asp:RequiredFieldValidator runat="server" ControlToValidate="txtNombre" ErrorMessage="Nombre requerido" CssClass="text-danger" />
         </div>
         <div class="col-md-6 mb-3">
-          <label>Apellido</label>
+          <label for="<%= txtApellido.ClientID %>" class="form-label">Apellido</label>
           <asp:TextBox ID="txtApellido" runat="server" CssClass="form-control"
                        AutoCompleteType="LastName" autocomplete="family-name" />
           <asp:RequiredFieldValidator runat="server" ControlToValidate="txtApellido" ErrorMessage="Apellido requerido" CssClass="text-danger" />
@@ -30,14 +35,14 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label>Email</label>
+          <label for="<%= txtEmail.ClientID %>" class="form-label">Email</label>
           <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email"
                        AutoCompleteType="Email" autocomplete="email" />
           <asp:RegularExpressionValidator runat="server" ControlToValidate="txtEmail"
               ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$" ErrorMessage="Email inválido" CssClass="text-danger" />
         </div>
         <div class="col-md-6 mb-3">
-          <label>Dirección</label>
+          <label for="<%= txtDireccion.ClientID %>" class="form-label">Dirección</label>
           <asp:TextBox ID="txtDireccion" runat="server" CssClass="form-control"
                        AutoCompleteType="HomeStreetAddress" autocomplete="street-address" />
           <asp:RequiredFieldValidator runat="server" ControlToValidate="txtDireccion" ErrorMessage="Dirección requerida" CssClass="text-danger" />
@@ -46,21 +51,25 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label>Ciudad</label>
+          <label for="<%= txtCiudad.ClientID %>" class="form-label">Ciudad</label>
           <asp:TextBox ID="txtCiudad" runat="server" CssClass="form-control"
                        AutoCompleteType="HomeCity" autocomplete="address-level2" />
           <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCiudad" ErrorMessage="Ciudad requerida" CssClass="text-danger" />
         </div>
         <div class="col-md-3 mb-3">
-          <label>CP</label>
+          <label for="<%= txtCP.ClientID %>" class="form-label">CP</label>
           <asp:TextBox ID="txtCP" runat="server" CssClass="form-control" MaxLength="10"
                        AutoCompleteType="HomeZipCode" autocomplete="postal-code" />
           <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCP" ErrorMessage="CP requerido" CssClass="text-danger" />
         </div>
       </div>
 
-      <asp:CheckBox ID="chkTyC" runat="server" Text="Acepto los términos y condiciones" />
-      <asp:Label ID="lblTyC" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
+      <div class="form-check mt-2">
+        <asp:CheckBox ID="chkTyC" runat="server" />
+        <label for="<%= chkTyC.ClientID %>" class="form-check-label">Acepto los términos y condiciones</label>
+      </div>
+
+      <asp:Label ID="lblTyC" runat="server" CssClass="text-danger d-block mt-1" Visible="false"></asp:Label>
 
       <div class="mt-3">
         <asp:Button ID="btnParticipar" runat="server" Text="Participar!" CssClass="btn btn-primary" OnClick="btnParticipar_Click" />
@@ -68,4 +77,16 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var inputEl = document.getElementById('<%= chkTyC.ClientID %>');
+      if (!inputEl) return;
+      var span = inputEl.parentElement;
+      if (span && span.tagName === 'SPAN') {
+        span.className = '';
+        inputEl.classList.add('form-check-input');
+      }
+    });
+  </script>
 </asp:Content>

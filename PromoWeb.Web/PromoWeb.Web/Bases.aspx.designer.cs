@@ -11,7 +11,7 @@ namespace PromoWeb.Web
 {
 
 
-    public partial class About
+    public partial class Bases
     {
     }
 }
