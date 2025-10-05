@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using PromoWeb.Negocio;
 using PromoWeb.Dominio;
 
@@ -8,6 +9,7 @@ namespace PromoWeb.Web
     {
         private readonly ClienteNegocio _clientes = new ClienteNegocio();
         private readonly VoucherNegocio _vouchers = new VoucherNegocio();
+        private static readonly Regex DniRegex = new Regex(@"^\d{6,8}$", RegexOptions.Compiled);
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -24,8 +26,19 @@ namespace PromoWeb.Web
         {
             lblMsg.Visible = false;
 
-            var dni = txtDni.Text.Trim();
-            if (string.IsNullOrWhiteSpace(dni)) return;
+            var dni = (txtDni.Text ?? "").Trim();
+
+            
+            if (!DniRegex.IsMatch(dni))
+            {
+                txtNombre.Text = string.Empty;
+                txtApellido.Text = string.Empty;
+                txtEmail.Text = string.Empty;
+                txtDireccion.Text = string.Empty;
+                txtCiudad.Text = string.Empty;
+                txtCP.Text = string.Empty;
+                return;
+            }
 
             var cli = _clientes.ObtenerPorDni(dni);
             if (cli != null)
@@ -39,23 +52,34 @@ namespace PromoWeb.Web
             }
             else
             {
-                txtNombre.Text = txtApellido.Text = txtEmail.Text = "";
-                txtDireccion.Text = txtCiudad.Text = txtCP.Text = "";
+                txtNombre.Text = string.Empty;
+                txtApellido.Text = string.Empty;
+                txtEmail.Text = string.Empty;
+                txtDireccion.Text = string.Empty;
+                txtCiudad.Text = string.Empty;
+                txtCP.Text = string.Empty;
             }
+        }
+
+        protected void valTyC_ServerValidate(object source, System.Web.UI.WebControls.ServerValidateEventArgs args)
+        {
+            args.IsValid = chkTyC.Checked;
         }
 
         protected void btnParticipar_Click(object sender, EventArgs e)
         {
             lblMsg.Visible = false;
-            lblTyC.Visible = false;
 
-            Page.Validate();
+            
+            Page.Validate("reg");
             if (!Page.IsValid) return;
 
-            if (!chkTyC.Checked)
+            
+            var dni = (txtDni.Text ?? "").Trim();
+            if (!DniRegex.IsMatch(dni))
             {
-                lblTyC.Text = "Debés aceptar los términos y condiciones.";
-                lblTyC.Visible = true;
+                lblMsg.Text = "DNI inválido. Usá solo números (6 a 8 dígitos).";
+                lblMsg.Visible = true;
                 return;
             }
 
@@ -68,16 +92,15 @@ namespace PromoWeb.Web
 
             try
             {
-                var dni = txtDni.Text.Trim();
-                var cli = _clientes.ObtenerPorDni(dni) ?? new Cliente();
+                var cli = _clientes.ObtenerPorDni(dni) ?? new Cliente { DNI = dni };
 
                 cli.DNI = dni;
-                cli.Nombre = txtNombre.Text.Trim();
-                cli.Apellido = txtApellido.Text.Trim();
-                cli.Email = txtEmail.Text.Trim();
-                cli.Direccion = txtDireccion.Text.Trim();
-                cli.Ciudad = txtCiudad.Text.Trim();
-                cli.CP = txtCP.Text.Trim();
+                cli.Nombre = (txtNombre.Text ?? "").Trim();
+                cli.Apellido = (txtApellido.Text ?? "").Trim();
+                cli.Email = (txtEmail.Text ?? "").Trim();
+                cli.Direccion = (txtDireccion.Text ?? "").Trim();
+                cli.Ciudad = (txtCiudad.Text ?? "").Trim();
+                cli.CP = (txtCP.Text ?? "").Trim();
 
                 var idCli = _clientes.Guardar(cli);
 

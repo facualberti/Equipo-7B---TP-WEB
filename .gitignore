@@ -25,3 +25,8 @@ packages/
 *.nupkg
 node_modules/
 dist/
+
+# secretos locales
+PromoWeb.Web/AppSettings.Local.config
+
+
